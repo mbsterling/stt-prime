@@ -1,41 +1,42 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 
 //Forms for Auth were taken from here.
 //https://supertokens.com/blog/building-a-login-screen-with-react-and-bootstrap
+
+const isEmpty = value => value.trim() === '';
+ 
 const Auth = () => {
   console.log("Entering Auth component...")
   let [authMode, setAuthMode] = useState("signin");
+  const [validCreds, setValidCreds] = useState({})
 
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
-  
+  const userNameRef = useRef();
+  const passwordRef = useRef();
+
+  const confirmHandler = (e) => {
+    e.preventDefault();
+
+     const enteredUserName = userNameRef.current.value;
+     const enteredPassword = passwordRef.current.value;
+
+    setValidCreds({
+        email: enteredUserName, 
+        password: enteredPassword
+    });
+
+    authenticateUser();
+}
 
   async function authenticateUser() {
-    let creds = {
-        email: username, 
-        password: password
-    };
-
     const response = 
         await fetch('https://hotellistingapi-mike.azurewebsites.net/api/User/login', 
     {
         method: 'POST',
-        body: JSON.stringify(creds),
+        body: JSON.stringify(validCreds),
         headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json();
     console.log(data);
-  };
-
-  /** @param {*} e : event */
-  const onUserNameChange = (e) => {
-    e.preventDefault();
-    setUserName(e.target.value);
-  };
-
-  const onPasswordChange = (e) => {
-    e.preventDefault();
-    setPassword(e.target.value);
   };
 
   const changeAuthMode = () => {
@@ -45,7 +46,7 @@ const Auth = () => {
   if (authMode === "signin") {
     return (
       <div className="Auth-form-container">
-        <form className="Auth-form">
+        <form className="Auth-form" onSubmit={confirmHandler}>
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign In</h3>
             <div className="text-center">
@@ -60,7 +61,8 @@ const Auth = () => {
                 type="email"
                 className="form-control mt-1"
                 placeholder="Enter email"
-                onChange={onUserNameChange}
+                ref={userNameRef}
+                //onChange={onUserNameChange}
               />
             </div>
             <div className="form-group mt-3">
@@ -69,7 +71,8 @@ const Auth = () => {
                 type="password"
                 className="form-control mt-1"
                 placeholder="Enter password"
-                onChange={onPasswordChange}
+                ref={passwordRef}
+                //onChange={onPasswordChange}
               />
             </div>
             <div className="d-grid gap-2 mt-3">
@@ -92,7 +95,7 @@ const Auth = () => {
 
   return (
     <div className="Auth-form-container">
-      <form className="Auth-form">
+      <form className="Auth-form" onSubmit={confirmHandler}>
         <div className="Auth-form-content">
           <h3 className="Auth-form-title">Sign In</h3>
           <div className="text-center">
@@ -115,6 +118,7 @@ const Auth = () => {
               type="email"
               className="form-control mt-1"
               placeholder="Email Address"
+              ref={userNameRef}
             />
           </div>
           <div className="form-group mt-3">
@@ -123,6 +127,7 @@ const Auth = () => {
               type="password"
               className="form-control mt-1"
               placeholder="Password"
+              ref={passwordRef}
             />
           </div>
           <div className="d-grid gap-2 mt-3">
