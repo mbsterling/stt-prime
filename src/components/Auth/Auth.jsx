@@ -8,7 +8,10 @@ const isEmpty = value => value.trim() === '';
 const Auth = () => {
   console.log("Entering Auth component...")
   let [authMode, setAuthMode] = useState("signin");
-  const [validCreds, setValidCreds] = useState({})
+  const [validCreds, setValidCreds] = useState({
+    email: '',
+    password: ''
+  });
 
   const userNameRef = useRef();
   const passwordRef = useRef();
@@ -28,14 +31,21 @@ const Auth = () => {
 }
 
   async function authenticateUser() {
+
+    let email = userNameRef.current.value; 
+    let password = passwordRef.current.value;
+
+    let theCreds = {email: email, password: password};
+
     const response = 
         await fetch('https://hotellistingapi-mike.azurewebsites.net/api/User/login', 
     {
         method: 'POST',
-        body: JSON.stringify(validCreds),
+        body: JSON.stringify(theCreds),
         headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json();
+
     console.log(data);
   };
 
@@ -144,4 +154,4 @@ const Auth = () => {
   )
 }
 
-export default Auth;
+export default React.memo(Auth);
