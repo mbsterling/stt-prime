@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react"
-
+import React, { useRef, useState } from "react";
 //Forms for Auth were taken from here.
 //https://supertokens.com/blog/building-a-login-screen-with-react-and-bootstrap
 
@@ -102,6 +101,7 @@ const Auth = () => {
       </div>
     )
   }
+
 
   return (
     <div className="Auth-form-container">
